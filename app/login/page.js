@@ -1,7 +1,10 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { FaGoogle } from "react-icons/fa";
+import useAuthStore from "@/stores/auth-store";
 
 const Login = () => {
   return (

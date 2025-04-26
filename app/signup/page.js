@@ -1,8 +1,12 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { FaGoogle } from "react-icons/fa";
-
+import useAuth from "@/stores/auth-store";
+const googleAuth =
+  "https://accounts.google.com/o/oauth2/auth?response_type=code&client_id=288454961127-jmj2th7slpfcitc9u8c0pa2j9utftc7b.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Fauth%2Fgoogle%2Fcallback%2F&scope=openid+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcloud-platform&state=gqCE5W7jdkCdi1ILpuNoaa7nPqGzOy&access_type=offline&include_granted_scopes=true&prompt=consent";
 const Signup = () => {
   return (
     <div className="min-h-screen flex items-center justify-center p-6">
@@ -44,9 +48,12 @@ const Signup = () => {
             className="w-full h-14 text-lg border border-white/10 flex items-center justify-center gap-3 hover:bg-dark-lighter/80"
             variant="outline"
             type="button"
+            asChild
           >
-            <FaGoogle className="w-5 h-5" />
-            Sign in with Google
+            <Link href={googleAuth}>
+              <FaGoogle className="w-5 h-5" />
+              Sign in with Google
+            </Link>
           </Button>
         </form>
 

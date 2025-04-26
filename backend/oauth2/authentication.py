@@ -1,12 +1,9 @@
-import requests
-from django.contrib.auth import get_user_model
 from rest_framework import exceptions
 from rest_framework.authentication import BaseAuthentication
+from utils.jwt_utils import verify_jwt
 
-User = get_user_model()
 
-
-class GoogleTokenAuthentication(BaseAuthentication):
+class JWTAuthentication(BaseAuthentication):
     """
     DRF Authentication class that:
     - Reads 'Authorization: Bearer <token>' header
@@ -17,33 +14,23 @@ class GoogleTokenAuthentication(BaseAuthentication):
     def authenticate(self, request):
         auth = request.headers.get("Authorization", "")
         if not auth.startswith("Bearer "):
-            return None  # we’re not handling this request
+            raise exceptions.AuthenticationFailed(
+                "Invalid Authentication"
+            )  # we’re not handling this request
 
         token = auth.split(" ", 1)[1].strip()
         if not token:
             raise exceptions.AuthenticationFailed("Empty Bearer token")
 
-        # hit Google
-        resp = requests.get(
-            "https://www.googleapis.com/oauth2/v3/userinfo",
-            headers={"Authorization": f"Bearer {token}"},
-            timeout=5,
-        )
-        if resp.status_code != 200:
+        payload = verify_jwt(token)
+        if not payload:
             raise exceptions.AuthenticationFailed("Invalid or expired token")
 
-        data = resp.json()
-        email = data.get("email")
-        if not email:
-            raise exceptions.AuthenticationFailed("No email in token")
+        # If we want email and username tag, that is already
+        # presesnt in payload, so to get email do payload['email']
+        request.user = payload
 
-        # lookup the user
-        try:
-            user = User.objects.get(email=email)
-        except User.DoesNotExist:
-            raise exceptions.AuthenticationFailed("No user matches this token")
-
-        return (user, token)
+        return payload, token
 
     def authenticate_header(self, request):
         return "Bearer"

@@ -93,8 +93,10 @@ DATABASES = {
         default=os.getenv("DATABASE_URI"), conn_max_age=600, ssl_require=True
     )
 }
+
+
 # Authentication
-AUTHENTICATION_BACKENDS = ("oauth2.authentication.GoogleTokenAuthentication",)
+AUTHENTICATION_BACKENDS = ("oauth2.authentication.JWTAuthentication",)
 
 # Social Auth settings
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.getenv("GOOGLE_CLIENT_ID")
@@ -149,7 +151,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "oauth2.authentication.GoogleTokenAuthentication",
+        "oauth2.authentication.JWTAuthentication",
     ],
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",

@@ -9,7 +9,7 @@
 
 **EchoVault** is a futuristic voice-based journaling web app.  
 Instead of writing manually, you simply **talk** — like you're chatting with a friend.  
-Our AI **analyzes your emotions**, **detects your mood**, and **auto-generates journal entries** capturing your real feelings.
+Our AI **analyzes your emotions**, **detects your mood**, and **auto-generates journal entries** capturing your real feelings
 
 ✅ Talk naturally  
 ✅ Capture emotions  

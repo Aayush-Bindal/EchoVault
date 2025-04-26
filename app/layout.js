@@ -1,3 +1,4 @@
+import Footer from "./_components/Footer";
 import "./globals.css";
 
 export const metadata = {
@@ -11,6 +12,7 @@ export default function RootLayout({ children }) {
       <body>
         <div className="fixed top-0 z-[-2] h-screen w-screen bg-[#0D0A1C] bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(123,97,255,0.3),rgba(255,255,255,0))]"></div>
         {children}
+        <Footer />
       </body>
     </html>
   );

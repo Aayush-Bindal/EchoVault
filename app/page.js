@@ -6,7 +6,7 @@ import FeatureCard from "./_components/FeatureCard";
 
 function page() {
   return (
-    <div className="h-[5000px]">
+    <div className="">
       <Navbar />
       <div className="pt-48 flex flex-col items-center">
         <Badge
@@ -35,7 +35,7 @@ function page() {
           </Button>
         </div>
 
-        <div className="mt-40 grid grid-cols-1 gap-8 px-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-40 grid grid-cols-1 gap-8 px-6 sm:grid-cols-2 lg:grid-cols-3 mb-32">
           <FeatureCard
             header={"Voice recording"}
             content={

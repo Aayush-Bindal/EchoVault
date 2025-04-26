@@ -174,4 +174,4 @@ cython_debug/
 .pypirc
 
 # Google Client Secret
-client_secrets.json
+secrets/

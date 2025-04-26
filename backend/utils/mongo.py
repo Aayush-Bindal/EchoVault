@@ -10,10 +10,10 @@ assert MONGO_URI is not None or MONGO_URI != "", "MONGO URI NOT SET"
 
 class MongoDBManager:
     def __init__(self) -> None:
-        client = MongoClient(MONGO_URI)
-        self.database = client.get_database("echovault")
+        self.client = MongoClient(MONGO_URI)
+        self.database = self.client.get_database("echovault")
 
-        assert client is not None, "Mongo URI is wrong"
+        assert self.client is not None, "Mongo URI is wrong"
         assert self.database is not None, "Mongo database not found"
 
     def user_collection(self):
@@ -21,6 +21,18 @@ class MongoDBManager:
             "Collection user not found"
         )
         return self.database.get_collection("users")
+
+    def chats_collection(self):
+        return self.database.get_collection("chats")
+
+    def messages_collection(self):
+        return self.database.get_collection("messages")
+
+    def emotion_analyses_collection(self):
+        return self.database.get_collection("emotion_analyses")
+
+    def state_collection(self):
+        return self.database.get_collection("oauth2_state")
 
 
 db_manager = MongoDBManager()

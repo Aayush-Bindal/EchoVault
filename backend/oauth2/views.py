@@ -9,16 +9,15 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework import status
 
-from datetime import timedelta
+from datetime import timedelta, datetime
 from google_auth_oauthlib.flow import Flow
 
 from utils.mongo import db_manager
-from utils.jwt_utils import generate_jwt
 
-CLIENT_SECRETS = path.join(path.dirname(__file__), "client_secrets.json")
-assert CLIENT_SECRETS is not None, "Client Secrets file is missing"
+CLIENT_SECRETS = path.abspath(path.join("secrets", "client_secrets.json"))
 
 users_collection = db_manager.user_collection()
+state_collection = db_manager.state_collection()
 
 
 class GoogleAuthCallbackView(APIView):
@@ -26,6 +25,24 @@ class GoogleAuthCallbackView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
+        incoming_state = request.GET.get("state")
+        if not incoming_state:
+            return Response({"error": "Missing state"}, status=400)
+
+        # Look up in Mongo
+        coll = db_manager.state_collection()
+        state_doc = coll.find_one({"state": incoming_state})
+
+        if not state_doc:
+            return Response({"error": "Invalid or expired state"}, status=400)
+
+        # Optional: enforce TTL (e.g. 10-minute max age)
+        if state_doc["created_at"] < datetime.utcnow() - timedelta(minutes=10):
+            coll.delete_one({"_id": state_doc["_id"]})
+            return Response({"error": "State expired"}, status=400)
+
+        # Once checked, remove it so it can’t be replayed
+        coll.delete_one({"_id": state_doc["_id"]})
         code = request.GET.get("code")
         if not code:
             return Response({"error": "Authorization code not found"}, status=400)
@@ -95,15 +112,6 @@ class GoogleAuthCallbackView(APIView):
                     },
                 )
 
-            # Now generate JWT token
-            payload = {"user_id": str(user["_id"]), "email": user["email"]}
-            jwt_token = generate_jwt(payload)
-
-            return Response(
-                {"jwt": jwt_token, "user": user["username"], "email": user["email"]},
-                status=status.HTTP_200_OK,
-            )
-
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -128,4 +136,7 @@ class GoogleLoginView(APIView):
             access_type="offline", include_granted_scopes="true", prompt="consent"
         )
 
-        return Response({"login_url": authorization_url}, status=status.HTTP_200_OK)
+        state_collection.insert_one({"state": state, "created_at": datetime.utcnow()})
+        return Response(
+            {"login_url": authorization_url, "state": state}, status=status.HTTP_200_OK
+        )

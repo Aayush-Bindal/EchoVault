@@ -105,6 +105,7 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
     "openid",
     "https://www.googleapis.com/auth/userinfo.email",
     "https://www.googleapis.com/auth/userinfo.profile",
+    "https://www.googleapis.com/auth/cloud-platform",
 ]
 
 SOCIAL_AUTH_PIPELINE = (

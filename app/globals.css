@@ -114,6 +114,12 @@
     @apply bg-background text-foreground;
   }
   p {
-    @apply text-white;;
+    @apply text-white;
+  }
+  h2 {
+    @apply text-white;
+  }
+  h1 {
+    @apply text-white;
   }
 }

@@ -3,11 +3,11 @@ import Navbar from "./_components/Navbar";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import FeatureCard from "./_components/FeatureCard";
+import Link from "next/link";
 
 function page() {
   return (
-    <div className="">
-      <Navbar />
+    <div className="text-lg">
       <div className="pt-48 flex flex-col items-center">
         <Badge
           variant="outline"
@@ -24,12 +24,14 @@ function page() {
           journaling
         </p>
         <div className="flex flex-col lg:flex-row justify-center items-center gap-4 mt-10">
-          <Button className="py-6 px-8 w-52">
-            Get Started <ArrowRight className="ml-2 h-4 w-4" />
+          <Button className="py-6 px-8 w-52" asChild>
+            <Link href="/signup">
+              Get Started <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
           </Button>
           <Button
             variant="outline"
-            className="py-6 px-12 w-52 bg-transparent border-[1px] border-primary text-white hover:bg-primary hover:text-white"
+            className="py-6 px-12 w-52 text-lg bg-transparent border-[1px] border-primary text-white hover:bg-primary hover:text-white"
           >
             Learn More
           </Button>

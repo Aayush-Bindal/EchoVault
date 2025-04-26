@@ -1,26 +1,11 @@
 function Footer() {
   return (
     <footer className="bg-[#0B0B1F] text-[#d1d5db] px-6 py-10 w-full h-72">
-      <hr />
+      <hr className="" />
       <div className="max-w-7xl mx-auto flex flex-col items-center space-y-6 pt-9">
         <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400">
           EchoVault
         </h2>
-
-        <div className="flex flex-wrap justify-center gap-6 text-sm">
-          <a href="#" className="hover:underline hover:text-white transition">
-            Home
-          </a>
-          <a href="#" className="hover:underline hover:text-white transition">
-            Features
-          </a>
-          <a href="#" className="hover:underline hover:text-white transition">
-            Pricing
-          </a>
-          <a href="#" className="hover:underline hover:text-white transition">
-            Contact
-          </a>
-        </div>
 
         <div className="flex space-x-6 mt-4">
           <a href="#" className="hover:text-cyan-400 transition">

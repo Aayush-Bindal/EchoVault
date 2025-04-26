@@ -119,10 +119,10 @@ EchoVault/
 
 | Name | Role |
 |:----:|:----:|
-| P1 | Backend, FastAPI, Speech-to-Text |
-| P2 | Frontend, React Developer |
+| P1 | Frontend, React Developer |
+| P2 | Frontend, React Developer |Backend, FastAPI, Speech-to-Text |
 | P3 | AI/ML Engineer (Sentiment Analysis) |
-| P4 | Frontend UI/UX Designer |
+| P4 | Frontend, Next Developer |
 
 ---
 

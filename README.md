@@ -23,7 +23,7 @@ Our AI **analyzes your emotions**, **detects your mood**, and **auto-generates j
 - 💬 **Emotion Detection** — Identify your mood based on voice and text.
 - 🧠 **AI Summarized Journals** — Get smart emotional summaries.
 - 🎨 **Futuristic UI** — Neon lights, glassy panels, smooth animations.
-- 🚀 **Instant Access** — No signup/login. Speak and save.
+- 🚀 **Instant Access** — Speak and save.
 
 ---
 
@@ -33,7 +33,7 @@ Our AI **analyzes your emotions**, **detects your mood**, and **auto-generates j
 |:--------:|:-------:|:-----:|
 | React | FastAPI | Hugging Face Sentiment Models |
 | Next.js | Python | Speech-to-Text (Whisper) |
-| Tailwind CSS | Flask (microservices if needed) | Custom Mood Analysis |
+| Tailwind CSS | DjangoRes | Custom Mood Analysis |
 
 ---
 

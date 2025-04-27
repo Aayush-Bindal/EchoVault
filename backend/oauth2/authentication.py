@@ -37,6 +37,7 @@ class JWTAuthentication(BaseAuthentication):
     def authenticate(self, request):
         auth = request.headers.get("Authorization", "")
         if not auth.startswith("Bearer "):
+            # no token → skip this backend
             return None
 
         token = auth.split(" ", 1)[1].strip()
@@ -48,12 +49,14 @@ class JWTAuthentication(BaseAuthentication):
         if not user_data:
             raise exceptions.AuthenticationFailed("Invalid access token")
 
+        # optionally enforce expiry
         expiry_str = user_data.get("oauth", {}).get("token_expiry")
         if expiry_str:
             expiry_dt = parse_datetime(expiry_str)
             if expiry_dt is None:
                 raise exceptions.AuthenticationFailed("Invalid expiry format")
 
+            # if it’s still naive (no tzinfo), attach your current TZ
             if timezone.is_naive(expiry_dt):
                 expiry_dt = timezone.make_aware(
                     expiry_dt, timezone.get_current_timezone()

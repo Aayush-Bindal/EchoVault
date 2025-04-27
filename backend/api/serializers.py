@@ -58,8 +58,9 @@ class ChatSerializer(serializers.Serializer):
 class MessageSerializer(serializers.Serializer):
     id = ObjectIdField(source="_id", read_only=True)
     chat_id = ObjectIdField()
-    content = serializers.CharField(allow_blank=True, default="[Voice message]")
-    message_type = serializers.CharField(allow_blank=True)
+    content = serializers.CharField()
+    message_type = serializers.CharField()
+    markdown_content = serializers.CharField()
     user_id = serializers.CharField(allow_null=True)
     created_at = DateTimeField(read_only=True)
     voice_file_path = serializers.CharField(allow_null=True, required=False)
@@ -95,7 +96,7 @@ class EmotionAnalysisSerializer(serializers.Serializer):
     id = ObjectIdField(source="_id", read_only=True)
     user_id = serializers.CharField()
     message_id = ObjectIdField()
-    text_content = serializers.CharField(allow_blank=True, default="[Voice message]")
+    text_content = serializers.CharField(allow_blank=True, default="[Voice Message]")
     emotion_data = serializers.JSONField(allow_null=True, default=dict)
     created_at = DateTimeField(read_only=True)
 

@@ -1,3 +1,4 @@
+from typing import Literal
 from bson import ObjectId
 from datetime import datetime
 from utils.mongo import db_manager
@@ -83,9 +84,10 @@ class Message(MongoModel):
     @classmethod
     def create_message(
         cls,
-        chat_id,
-        content,
-        message_type,
+        chat_id: ObjectId,
+        content: str,
+        message_type: Literal["text", "voice", "ai"],
+        markdown_content: str,
         user_id=None,
         voice_file_path=None,
         emotion_analysis_id=None,
@@ -94,7 +96,8 @@ class Message(MongoModel):
             "chat_id": chat_id,
             "content": content,
             "message_type": message_type,
-            "user_id": user_id,  # None for AI responses
+            "markdown_content": markdown_content,
+            "user_id": user_id,
             "created_at": datetime.utcnow(),
             "voice_file_path": voice_file_path,
             "emotion_analysis_id": emotion_analysis_id,

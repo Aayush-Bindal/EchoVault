@@ -27,7 +27,7 @@ def speech_to_text(audio_file_path) -> str:
         encoding=RecognitionConfig.AudioEncoding.LINEAR16,  # Ensure this matches your WAV file
         sample_rate_hertz=16000,  # Use 16000 Hz after resampling
         language_code="en-US",
-        enable_automatic_punctuation=True,
+        enable_automatic_puncutations=True,
     )
 
     # Make the synchronous recognize request
@@ -35,6 +35,6 @@ def speech_to_text(audio_file_path) -> str:
 
     # Print the transcription
     for result in response.results:
-        text = text + result.alternatives[0].transcript
+        text.join(result.alternatives[0].transcript)
 
     return text

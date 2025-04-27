@@ -5,17 +5,11 @@ FROM python:3.13-slim
 WORKDIR /app
 
 # Install system dependencies if needed (optional for now)
-RUN apt-get update && apt-get install -y \
-    ffmpeg \
-    gcc \
-    libpq-dev \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+# RUN apt-get update && apt-get install -y gcc
 
 # Copy requirements first and install them (faster docker caching)
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install gunicorn
 
 # Copy everything else
 COPY . .
@@ -27,4 +21,4 @@ ENV GOOGLE_APPLICATION_CREDENTIALS=/app/secrets/speech-to-text.json
 EXPOSE 8000
 
 # Run migrations and start server (optional you can change CMD)
-CMD ["gunicorn", "backend.wsgi:application", "--bind", "0.0.0.0:8000"]
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

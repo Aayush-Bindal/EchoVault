@@ -1,14 +1,13 @@
 import os
 import subprocess
 from datetime import datetime
-from asyncio import run
+
+from django.conf import settings
 
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
-
-from django.conf import settings
 
 from .models import Chat, Message, EmotionAnalysis
 from .serializers import (
@@ -20,6 +19,7 @@ from .serializers import (
 
 from services.speech_to_text import speech_to_text
 from services.emotion_analyzer import analyze_emotion
+from services.create_markdown import return_markdown
 from oauth2.authentication import JWTAuthentication
 
 
@@ -141,7 +141,7 @@ class MessageViewSet(viewsets.ViewSet):
     @action(
         detail=False, methods=["post"], parser_classes=[MultiPartParser, FormParser]
     )
-    def voice(self, request):
+    async def voice(self, request):
         """Handle voice message uploads, convert to text, and analyze emotion"""
         serializer = VoiceMessageSerializer(data=request.data)
         if serializer.is_valid():
@@ -163,50 +163,35 @@ class MessageViewSet(viewsets.ViewSet):
                 )
 
             # Save the voice file
-            # Create a directory for voice files if it doesn't exist
-            voice_files_dir = os.path.join(settings.MEDIA_ROOT, "voice_files")
+            # In a production app, you might want to use a cloud storage service
+            voice_files_dir = os.path.join(settings.MEDIA_ROOT, 'voice_files')
             os.makedirs(voice_files_dir, exist_ok=True)
 
-            # Generate a unique filename
-            filename = (
-                f"{user_id}_{chat_id}_{datetime.utcnow().strftime('%Y%m%d%H%M%S')}.wav"
-            )
+# Generate a unique filename
+            filename = f"{user_id}_{chat_id}_{datetime.utcnow().strftime('%Y%m%d%H%M%S')}.wav"
             voice_file_path = os.path.join(voice_files_dir, filename)
-            temp_path = voice_file_path + ".temp.wav"
 
-            # Save the file
-            with open(voice_file_path, "wb") as dest:
+# Save the file
+            with open(voice_file_path, 'wb') as dest:
                 for chunk in voice_file.chunks():
                     dest.write(chunk)
-            try:
-                subprocess.run(
-                    [
-                        "ffmpeg",
-                        "-y",
-                        "-i",
-                        voice_file_path,
-                        "-ac",
-                        "1",
-                        "-ar",
-                        "16000",
-                        temp_path,
-                    ],
-                    check=True,
-                    stdout=subprocess.DEVNULL,
-                    stderr=subprocess.DEVNULL,
-                )
-                os.replace(temp_path, voice_file_path)
 
+            # Convert intial file to 16kHz
+            temp_path = voice_file_path + '.temp.wav'
+
+            subprocess.run(["ffmpeg", "-y", "-i", voice_file_path, "-ac", "1", "-ar", "16000", temp_path], check=True)
+            os.replace(temp_path, voice_file_path)
+            try:
                 # Convert speech to text
                 text_content = speech_to_text(voice_file_path)
+                markdown_content = return_markdown(text_content)
 
-                if text_content == "":
-                    raise Exception("text is empty")
                 # Create the message first
                 message_data = {
                     "chat_id": chat_id,
                     "content": text_content,
                     "message_type": Message.MESSAGE_TYPE_VOICE,
+                    "markdown_content": markdown_content,
                     "user_id": user_id,
                     "voice_file_path": voice_file_path,
                 }
@@ -216,7 +201,7 @@ class MessageViewSet(viewsets.ViewSet):
                     message = message_serializer.save()
 
                     # Analyze emotion in the text
-                    emotion_data = run(analyze_emotion(text_content))
+                    emotion_data = await analyze_emotion(text_content)
 
                     # Store emotion analysis
                     analysis_data = {
@@ -257,9 +242,6 @@ class MessageViewSet(viewsets.ViewSet):
                 )
 
             except Exception as e:
-                # Clean up the temporary file
-                if voice_file_path and os.path.exists(voice_file_path):
-                    os.unlink(voice_file_path)
                 return Response(
                     {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
                 )

@@ -1,7 +1,5 @@
 import requests
 from os import path
-from bson import ObjectId
-
 from django.conf import settings
 from django.urls import reverse
 from django.utils import timezone
@@ -20,20 +18,6 @@ CLIENT_SECRETS = path.abspath(path.join("secrets", "client_secrets.json"))
 
 users_collection = db_manager.user_collection()
 state_collection = db_manager.state_collection()
-
-
-def bson_to_json(doc):
-    if isinstance(doc, list):
-        return [bson_to_json(d) for d in doc]
-    if isinstance(doc, dict):
-        for key, value in doc.items():
-            if isinstance(value, ObjectId):
-                doc[key] = str(value)
-            elif isinstance(value, dict):
-                doc[key] = bson_to_json(value)
-            elif isinstance(value, list):
-                doc[key] = [bson_to_json(item) for item in value]
-    return doc
 
 
 class GoogleAuthCallbackView(APIView):
@@ -127,10 +111,7 @@ class GoogleAuthCallbackView(APIView):
                         }
                     },
                 )
-                # Update oauth token to send
-                user = users_collection.find_one({"email": email})
 
-            return Response({"user": bson_to_json(user)}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 

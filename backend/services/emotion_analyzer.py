@@ -30,7 +30,7 @@ async def analyze_emotion(conversation):
 
     # Gather all results
     emotion_list = await asyncio.gather(*tasks)
-    return emotion_list
+    return calculate_average_emotions(emotion_list)
 
 
 async def analyze_sentence(sentence):
@@ -43,3 +43,47 @@ async def analyze_sentence(sentence):
         None, lambda: emotion_analyzer(sentence)
     )
     return {sentence: result[0]}
+
+
+def calculate_average_emotions(emotion_list):
+    """
+    Calculate the average score for each emotion across all analyzed sentences
+
+    Args:
+        emotion_list (list): List of dictionaries containing emotion analysis results
+
+    Returns:
+        dict: Average scores for each emotion across all sentences
+    """
+    # Initialize counters and accumulators
+    emotion_totals = {}
+    sentence_count = len(emotion_list)
+
+    # Process each sentence
+    for sentence_data in emotion_list:
+        # Get the first (and only) key from the dictionary
+        sentence = list(sentence_data.keys())[0]
+        # Get the emotion scores for this sentence
+        emotions = sentence_data[sentence]
+
+        # Add each emotion's score to our running totals
+        for emotion in emotions:
+            label = emotion["label"]
+            score = emotion["score"]
+
+            if label in emotion_totals:
+                emotion_totals[label] += score
+            else:
+                emotion_totals[label] = score
+
+    # Calculate averages
+    emotion_averages = {
+        emotion: score / sentence_count for emotion, score in emotion_totals.items()
+    }
+
+    # Sort emotions by average score (highest first)
+    sorted_emotions = dict(
+        sorted(emotion_averages.items(), key=lambda item: item[1], reverse=True)
+    )
+
+    return sorted_emotions

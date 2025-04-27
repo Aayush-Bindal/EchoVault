@@ -15,7 +15,8 @@ from pathlib import Path
 from dotenv import load_dotenv
 from dj_database_url import config
 
-load_dotenv(os.path.abspath(os.path.join("secrets", ".env")))
+ENV_PATH = os.path.abspath(os.path.join("secrets", ".env"))
+load_dotenv(ENV_PATH)
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -31,6 +32,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -42,6 +44,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # Project files
     "oauth2",
+    "api",
     # Third Party modules
     "rest_framework",
     "rest_framework.authtoken",

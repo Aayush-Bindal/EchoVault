@@ -1,6 +1,7 @@
 import os
 import subprocess
 from datetime import datetime
+from asyncio import run
 
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
@@ -215,7 +216,7 @@ class MessageViewSet(viewsets.ViewSet):
                     message = message_serializer.save()
 
                     # Analyze emotion in the text
-                    emotion_data = analyze_emotion(text_content)
+                    emotion_data = run(analyze_emotion(text_content))
 
                     # Store emotion analysis
                     analysis_data = {

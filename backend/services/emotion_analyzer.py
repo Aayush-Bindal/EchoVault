@@ -1,6 +1,6 @@
 import re
+import asyncio
 from transformers import pipeline
-from json import dump
 
 # Load the RoBERTa model fine-tuned for emotions
 emotion_analyzer = pipeline(
@@ -10,40 +10,36 @@ emotion_analyzer = pipeline(
 )
 
 
-def analyze_emotion(conversation):
+async def analyze_emotion(conversation):
     """
-    Analyze the emotion in a text
-
+    Analyze the emotion in a text asynchronously
     Args:
         text (str): Text to analyze
-
     Returns:
         dict: Emotion analysis data with scores for different emotions
     """
-    # In a real implementation, you would use an emotion analysis API or model
-    # Examples include:
-    # - Custom trained models using transformers (BERT, RoBERTa, etc.)
-    # - Sentiment analysis APIs (Google Cloud NLP, Azure Text Analytics, etc.)
-    # - Open-source emotion detection libraries
-
-    emotion_list = []
+    # Split conversation into sentences
     sentences = re.split(r"[.?!]", conversation.strip())
-
     # Remove any empty sentences (if conversation ends with a dot)
     sentences = [sentence for sentence in sentences if sentence]
 
-    # Analyze each sentence separately
+    # Create tasks for analyzing each sentence concurrently
+    tasks = []
+    for sentence in sentences:
+        tasks.append(analyze_sentence(sentence))
 
-    for i, sentence in enumerate(sentences, 1):
-        user_message = sentence
-        result = emotion_analyzer(user_message)
-        emotion_list.append({sentence: result[0]})
-
+    # Gather all results
+    emotion_list = await asyncio.gather(*tasks)
     return emotion_list
 
 
-convo = "Woke up late today, kinda lazy morning lol. Had coffee, scrolled Insta for a while. Then rushed to college 'cause I had a project meeting. Afternoon was chill, just hung out with friends at the canteen. Evening was crazy tho — went for a walk and got caught in the rain! 😂 Now just lying in bed, feeling grateful for small moments like these."
-data = analyze_emotion(convo)
-
-with open("output.json", "w") as file:
-    dump(data, file, indent=4)
+async def analyze_sentence(sentence):
+    """
+    Analyze a single sentence asynchronously
+    """
+    # Run the model inference in an executor to avoid blocking the event loop
+    # This is necessary because the transformers pipeline is not natively async
+    result = await asyncio.get_event_loop().run_in_executor(
+        None, lambda: emotion_analyzer(sentence)
+    )
+    return {sentence: result[0]}

@@ -29,30 +29,32 @@ Our AI **analyzes your emotions**, **detects your mood**, and **auto-generates j
 
 ## ⚙️ Tech Stack
 
-| Frontend | Backend | AI/ML |
-|:--------:|:-------:|:-----:|
-| React | FastAPI | Hugging Face Sentiment Models |
-| Next.js | Python | Speech-to-Text (Whisper) |
-| Tailwind CSS | DjangoRes | Custom Mood Analysis |
+|   Frontend   |  Backend  |             AI/ML             |
+| :----------: | :-------: | :---------------------------: |
+|    React     |  FastAPI  | Hugging Face Sentiment Models |
+|   Next.js    |  Python   |   Speech-to-Text (Whisper)    |
+| Tailwind CSS | DjangoRes |     Custom Mood Analysis      |
 
 ---
 
 ## 🛠 Architecture Overview
 
-1. **Frontend (React + Tailwind)**  
-   - Record voice  
-   - Send audio to backend  
+1. **Frontend (React + Tailwind)**
+
+   - Record voice
+   - Send audio to backend
    - Display mood + journal summary beautifully
 
-2. **Backend (FastAPI)**  
-   - Receive and process audio  
-   - Transcribe voice using Whisper  
-   - Detect emotions with lightweight AI models  
+2. **Backend (FastAPI)**
+
+   - Receive and process audio
+   - Transcribe voice using Whisper
+   - Detect emotions with lightweight AI models
    - Generate structured journal
 
-3. **AI Layer**  
-   - **Speech Recognition** — Converts audio to text  
-   - **Sentiment Analysis** — Detects primary mood (Happy, Sad, Excited, Calm)  
+3. **AI Layer**
+   - **Speech Recognition** — Converts audio to text
+   - **Sentiment Analysis** — Detects primary mood (Happy, Sad, Excited, Calm)
    - **Summarization** — Creates short emotional journal entries
 
 ---
@@ -117,12 +119,12 @@ EchoVault/
 
 ## 🙌 Team EchoVault
 
-| Name | Role |
-|:----:|:----:|
-| P1 | Frontend, React Developer |
-| P2 | Frontend, React Developer |Backend, FastAPI, Speech-to-Text |
-| P3 | AI/ML Engineer (Sentiment Analysis) |
-| P4 | Frontend, Next Developer |
+| Name |                Role                 |
+| :--: | :---------------------------------: | -------------------------------- |
+|  P1  |      Frontend, React Developer      |
+|  P2  |      Frontend, React Developer      | Backend, FastAPI, Speech-to-Text |
+|  P3  | AI/ML Engineer (Sentiment Analysis) |
+|  P4  |      Frontend, Next Developer       |
 
 ---
 

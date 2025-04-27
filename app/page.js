@@ -25,7 +25,7 @@ function page() {
         </p>
         <div className="flex flex-col lg:flex-row justify-center items-center gap-4 mt-10">
           <Button className="py-6 px-8 w-52 text-lg" asChild>
-            <Link href="/signup">
+            <Link href="/journaling">
               Get Started <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Button>

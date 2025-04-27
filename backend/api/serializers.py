@@ -2,7 +2,7 @@ from rest_framework import serializers
 from bson import ObjectId
 from datetime import datetime
 
-from .models import Chat
+from .models import Chat, Message, EmotionAnalysis
 
 
 class ObjectIdField(serializers.Field):
@@ -58,16 +58,14 @@ class ChatSerializer(serializers.Serializer):
 class MessageSerializer(serializers.Serializer):
     id = ObjectIdField(source="_id", read_only=True)
     chat_id = ObjectIdField()
-    content = serializers.CharField()
-    message_type = serializers.CharField()
+    content = serializers.CharField(allow_blank=True, default="[Voice message]")
+    message_type = serializers.CharField(allow_blank=True)
     user_id = serializers.CharField(allow_null=True)
     created_at = DateTimeField(read_only=True)
     voice_file_path = serializers.CharField(allow_null=True, required=False)
     emotion_analysis_id = ObjectIdField(allow_null=True, required=False)
 
     def create(self, validated_data):
-        from .models import Message
-
         chat_id = validated_data.get("chat_id")
         content = validated_data.get("content")
         message_type = validated_data.get("message_type")
@@ -97,13 +95,11 @@ class EmotionAnalysisSerializer(serializers.Serializer):
     id = ObjectIdField(source="_id", read_only=True)
     user_id = serializers.CharField()
     message_id = ObjectIdField()
-    text_content = serializers.CharField()
-    emotion_data = serializers.JSONField()
+    text_content = serializers.CharField(allow_blank=True, default="[Voice message]")
+    emotion_data = serializers.JSONField(allow_null=True, default=dict)
     created_at = DateTimeField(read_only=True)
 
     def create(self, validated_data):
-        from .models import EmotionAnalysis
-
         user_id = validated_data.get("user_id")
         message_id = validated_data.get("message_id")
         text_content = validated_data.get("text_content")

@@ -15,7 +15,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 from dj_database_url import config
 
-load_dotenv()
+load_dotenv(os.path.abspath(os.path.join("secrets", ".env")))
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -30,7 +30,6 @@ SECRET_KEY = "django-insecure-r2-%2am@por!_fwenqic%jbk!4u72l8p883we4!5+8x4aofxah
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -47,7 +46,6 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "social_django",
-    "django_extensions",
 ]
 
 MIDDLEWARE = [

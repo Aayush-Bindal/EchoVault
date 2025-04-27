@@ -1,9 +1,13 @@
 import os
-import tempfile
+import subprocess
+from datetime import datetime
+
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
+
+from django.conf import settings
 
 from .models import Chat, Message, EmotionAnalysis
 from .serializers import (
@@ -158,17 +162,45 @@ class MessageViewSet(viewsets.ViewSet):
                 )
 
             # Save the voice file
-            # In a production app, you might want to use a cloud storage service
-            voice_file_path = None
-            with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as temp_file:
-                for chunk in voice_file.chunks():
-                    temp_file.write(chunk)
-                voice_file_path = temp_file.name
+            # Create a directory for voice files if it doesn't exist
+            voice_files_dir = os.path.join(settings.MEDIA_ROOT, "voice_files")
+            os.makedirs(voice_files_dir, exist_ok=True)
 
+            # Generate a unique filename
+            filename = (
+                f"{user_id}_{chat_id}_{datetime.utcnow().strftime('%Y%m%d%H%M%S')}.wav"
+            )
+            voice_file_path = os.path.join(voice_files_dir, filename)
+            temp_path = voice_file_path + ".temp.wav"
+
+            # Save the file
+            with open(voice_file_path, "wb") as dest:
+                for chunk in voice_file.chunks():
+                    dest.write(chunk)
             try:
+                subprocess.run(
+                    [
+                        "ffmpeg",
+                        "-y",
+                        "-i",
+                        voice_file_path,
+                        "-ac",
+                        "1",
+                        "-ar",
+                        "16000",
+                        temp_path,
+                    ],
+                    check=True,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                )
+                os.replace(temp_path, voice_file_path)
+
                 # Convert speech to text
                 text_content = speech_to_text(voice_file_path)
 
+                if text_content == "":
+                    raise Exception("text is empty")
                 # Create the message first
                 message_data = {
                     "chat_id": chat_id,

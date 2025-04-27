@@ -18,8 +18,8 @@ function Analysis() {
       <p className="text-7xl font-bold mb-8 text-center text-white pt-11">
         Journal and Analysis
       </p>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-10 pt-10 px-6">
-        <div className="lg:col-span-2 lg:px-10">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 pt-10 px-6">
+        <div className="lg:col-span-3 lg:px-10">
           <Card className="dark border-2 border-[#3a158e]">
             <CardContent className="py-10">
               <p className="text-[#d1d5db]">
